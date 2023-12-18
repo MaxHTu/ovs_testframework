@@ -1,0 +1,58 @@
+import os
+from time import sleep
+from mininet.net import Mininet as MN
+from mininet.node import Controller
+from mininet.cli import CLI
+from mininet.log import setLogLevel, info
+
+
+class MininetNetworkManager:
+
+    def __init__(self):
+        self.net = None
+
+    def mininet_2h_1s(self):
+        self.net = MN()
+
+        self.net.addController('c0', controller=Controller)
+
+        h1 = self.net.addHost('h1', ip='10.0.0.1', mac='00:00:00:00:00:01')
+        h2 = self.net.addHost('h2', ip='10.0.0.2', mac='00:00:00:00:00:02')
+        s1 = self.net.addSwitch('s1')
+
+        self.net.addLink(h1, s1)
+        self.net.addLink(h2, s1)
+
+        self.net.start()
+        #CLI(self.net)
+
+    def mininet_1h_1s(self):
+        self.net = MN()
+
+        self.net.addController('c0', controller=Controller)
+    
+        h1 = self.net.addHost('h1', ip='10.0.0.1', mac='00:00:00:00:00:01')
+        s1 = self.net.addSwitch('s1')
+
+        self.net.addLink(h1, s1)
+
+        self.net.start()
+        #CLI(self.net)
+
+
+    def cleanup_network(self):
+        if self.net:
+            self.net.stop()
+
+        os.system('sudo mn -c')
+        os.system('sudo fuser -k 6653/tcp')
+
+# This is for testing purposes:
+if __name__ == '__main__':
+
+    setLogLevel('info')
+    mininet = MininetNetworkManager()
+    mininet.mininet_1h_1s()
+    mininet.mininet_2h_1s() 
+    sleep(5)
+    mininet.cleanup_network()
