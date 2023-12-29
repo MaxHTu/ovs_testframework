@@ -25,7 +25,7 @@ class MininetNetwork:
         self.net.addLink(h2, s1)
 
         self.net.start()
-        CLI(self.net)
+        #CLI(self.net)
 
     # Mininet setup with 1 host and 1 switch
     def mininet_1h_1s(self):
