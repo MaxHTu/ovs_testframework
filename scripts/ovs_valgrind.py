@@ -2,7 +2,7 @@ import os
 from time import sleep
 from datetime import datetime
 
-def ovs_valgrind(log_filename):
+def start_valgrind(log_filename):
     os.system('sudo service openvswitch-switch stop')
     sleep(2)
 
@@ -13,7 +13,7 @@ def ovs_valgrind(log_filename):
     os.system('sudo valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ovsdb-server --remote=punix:/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --detach')
     os.system(f'sudo valgrind --trace-children=yes --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file={ovs_vswitchd_logs} ovs-vswitchd unix:/var/run/openvswitch/db.sock --detach')
 
-def ovs_valgrind_cleanup():
+def valgrind_cleanup():
     os.system("ps aux | grep '[o]vs-vswitchd' | awk '{print $2}' | xargs -r sudo kill -9")
     os.system("ps aux | grep '[o]vsdb-server' | awk '{print $2}' | xargs -r sudo kill -9")
     
@@ -23,6 +23,6 @@ def ovs_valgrind_cleanup():
 
 # This is for testing purposes:
 if __name__ == '__main__':
-    ovs_valgrind('test')
+    start_valgrind('test')
     sleep(10)
-    ovs_valgrind_cleanup()
+    valgrind_cleanup()

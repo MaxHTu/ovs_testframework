@@ -25,7 +25,7 @@ class MininetNetwork:
         self.net.addLink(h2, s1)
 
         self.net.start()
-        #CLI(self.net)
+        CLI(self.net)
 
     # Mininet setup with 1 host and 1 switch
     def mininet_1h_1s(self):
@@ -54,8 +54,8 @@ if __name__ == '__main__':
     setLogLevel('info')
 
     mininet = MininetNetwork()
-    mininet.mininet_1h_1s()
-    #mininet.mininet_2h_1s() 
-    sleep(5)
-    mininet.stop_mininet()
-    mininet.cleanup_network()
+    #mininet.mininet_1h_1s()
+    mininet.mininet_2h_1s() 
+    #sleep(5)
+    #mininet.stop_mininet()
+    #mininet.cleanup_network()
