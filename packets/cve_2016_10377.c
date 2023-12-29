@@ -126,8 +126,8 @@ int main(int argc, char *argv[])
 	socket_address.sll_addr[5] = MY_DEST_MAC5;
 
 	/* Print the size of the iphdr */
-	long size = sizeof(struct iphdr);
-	printf("The size is: %ld\n", size);
+	//long size = sizeof(struct iphdr);
+	//printf("The size is: %ld\n", size);
 
 	/* Send packet */
 	if (sendto(sockfd, sendbuf, tx_len, 0, (struct sockaddr*)&socket_address, sizeof(struct sockaddr_ll)) < 0)
