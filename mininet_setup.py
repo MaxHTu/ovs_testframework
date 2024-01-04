@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     mininet = MininetNetwork()
     #mininet.mininet_1h_1s()
-    mininet.mininet_2h_1s() 
+    #mininet.mininet_2h_1s() 
     #sleep(5)
-    #mininet.stop_mininet()
-    #mininet.cleanup_network()
+    mininet.stop_mininet()
+    mininet.cleanup_network()
