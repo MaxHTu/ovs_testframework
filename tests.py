@@ -34,6 +34,30 @@ def cve_2016_10377():
 
     os.system('rm packets/cve_2016_10377')
 
+def cve_2017_9264():
+    pass
+
+def cve_2020_27827():
+    pass
+
+def cve_2020_35498():
+    pass
+
+def cve_2021_3905():
+    pass
+
+def cve_2022_4337():
+    pass
+
+def cve_2022_4338():
+    pass
+
+def cve_2022_32166():
+    pass
+
+def cve_2023_1668():
+    pass
+
 if __name__ == '__main__':
     #cve_2016_2074()
     cve_2016_10377()
