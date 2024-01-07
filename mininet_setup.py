@@ -41,10 +41,15 @@ class MininetNetwork:
         self.net.start()
         #CLI(self.net)
 
+    def flow_rules(self, bridge):
+        pass
+
+    # Stops Mininet
     def stop_mininet(self):
         if self.net:
             self.net.stop()
 
+    # Cleans up the network and the controller
     def cleanup_network(self):
         os.system('sudo mn -c')
         os.system('sudo fuser -k 6653/tcp')
@@ -55,7 +60,7 @@ if __name__ == '__main__':
 
     mininet = MininetNetwork()
     #mininet.mininet_1h_1s()
-    mininet.mininet_2h_1s() 
+    #mininet.mininet_2h_1s() 
     #sleep(5)
-    #mininet.stop_mininet()
-    #mininet.cleanup_network()
+    mininet.stop_mininet()
+    mininet.cleanup_network()
