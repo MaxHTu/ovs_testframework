@@ -15,7 +15,7 @@ class MininetNetwork:
     def mininet_2h_1s(self):
         self.net = Mininet()
 
-        self.net.addController('c0', controller=Controller)
+        #self.net.addController('c0', controller=Controller)
 
         h1 = self.net.addHost('h1', ip='10.0.0.1', mac='00:00:00:00:00:01')
         h2 = self.net.addHost('h2', ip='10.0.0.2', mac='00:00:00:00:00:02')
@@ -25,13 +25,14 @@ class MininetNetwork:
         self.net.addLink(h2, s1)
 
         self.net.start()
+        self.flow_rules(s1)
         #CLI(self.net)
 
     # Mininet setup with 1 host and 1 switch
     def mininet_1h_1s(self):
         self.net = Mininet()
 
-        self.net.addController('c0', controller=Controller)
+        #self.net.addController('c0', controller=Controller)
     
         h1 = self.net.addHost('h1', ip='10.0.0.1', mac='00:00:00:00:00:01')
         s1 = self.net.addSwitch('s1')
@@ -39,10 +40,13 @@ class MininetNetwork:
         self.net.addLink(h1, s1)
 
         self.net.start()
+        self.flow_rules(s1)
         #CLI(self.net)
 
     def flow_rules(self, bridge):
-        pass
+        os.system("sudo ovs-ofctl del-flows {}".format(bridge))
+        # os.system("sudo ovs-ofctl add-flow {} priority=0,actions=CONTROLLER".format(bridge))
+        os.system("sudo ovs-ofctl add-flow {} priority=0,actions=NORMAL".format(bridge))
 
     # Stops Mininet
     def stop_mininet(self):
