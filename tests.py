@@ -16,7 +16,7 @@ def cve_2016_2074():
     os.system('sudo ovs-vsctl del-br br0')
 
     vulnerable = False
-    if 'ovs-vswitchd: transaction error' in output:
+    if 'ovs-vswitchd: transaction error' in output.decode():
         vulnerable = True
 
     return vulnerable
