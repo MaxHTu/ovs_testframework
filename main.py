@@ -3,21 +3,18 @@ import sys
 import tests
 from datetime import datetime
 
-# Checks if the script is run as root
-if os.geteuid() != 0:
-    sys.exit("This Script must be run as root")
-
 def get_functions():
     list_cve = [func for func in dir(tests) if callable(getattr(tests, func)) and func.startswith('cve_')]
     indexing = {str(index + 1): func for index, func in enumerate(list_cve)}
     return indexing
 
 def get_ovs_version():
-    pass
+    output = os.popen('ovs-vsctl --version').read()
+    ovs_version = output.split()[3]
+    return ovs_version
 
 def start_tests():
     all_cve = get_functions()
-    #print(all_cve)
 
     print('Available CVE Tests')
     for num, cve in all_cve.items():
@@ -48,6 +45,12 @@ def start_tests():
     return test_results
 
 def main():
+
+    if os.geteuid() != 0:
+        sys.exit("This Script must be run as root")
+
+    ovs_version = get_ovs_version()
+    print('Current Open vSwitch version: {}'.format(ovs_version))
     test_results = start_tests()
 
     folder_path = 'test_results'
@@ -56,7 +59,10 @@ def main():
 
     log_file_path = os.path.join(folder_path, log_filename)
 
+    print('Test Results:')
+
     with open(log_file_path, 'w') as log_file:
+        log_file.write('Open vSwitch version: {}\n'.format(ovs_version))
         for test, result in test_results.items():
             result_text = "vulnerable: {}".format('true' if result else 'false')
             print('{} {}'.format(test, result_text))
