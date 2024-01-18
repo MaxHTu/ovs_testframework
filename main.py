@@ -20,14 +20,16 @@ def start_tests():
     for num, cve in all_cve.items():
         print('{}. {}'.format(num, cve))
 
-    usr_input = input("Enter the number(s) of the CVE test(s) to run (e.g. 1 or 1,2,3 or 'all'): ")
+    try:
+        usr_input = raw_input("Enter the number(s) of the CVE test(s) to run (e.g. 1 or 1,2,3 or 'all'): ")
+    except NameError:
+        usr_input = input("Enter the number(s) of the CVE test(s) to run (e.g. 1 or 1,2,3 or 'all'): ")
     
     test_results = {}
     if usr_input == 'all':
         for cve in all_cve.values():
             print('Running {}...'.format(cve))
             func = getattr(tests, cve)
-            func()
             test_results[cve] = func()
     else:
         usr_input = usr_input.split(',')
@@ -36,7 +38,6 @@ def start_tests():
             if num in all_cve.keys():
                 print('Running {}...'.format(all_cve[num]))
                 func = getattr(tests, all_cve[num])
-                func()
                 test_results[all_cve[num]] = func()
             else:
                 print("Invalid input. Please enter valid number(s) separated by commas or 'all'.")
@@ -63,6 +64,7 @@ def main():
 
     with open(log_file_path, 'w') as log_file:
         log_file.write('Open vSwitch version: {}\n'.format(ovs_version))
+        log_file.write('Test Results:\n')
         for test, result in test_results.items():
             result_text = "vulnerable: {}".format('true' if result else 'false')
             print('{} {}'.format(test, result_text))
