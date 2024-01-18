@@ -87,14 +87,15 @@ int main(int argc, char *argv[])
 	eh->ether_dhost[5] = MY_DEST_MAC5;
 	/* Ethertype field */
 	eh->ether_type = htons(ETH_P_IP);
-	tx_len += sizeof(struct ether_header);
+	//tx_len += sizeof(struct ether_header);
+		tx_len += sizeof(struct ether_header) + 256;
 
 	/* IP Header */
 	iph->version = 4;
 	/* ihl * 4  */
-	iph->ihl = 7;
+	iph->ihl = 5;
 	iph->tos = 0;
-	iph->tot_len = htons(sizeof(struct iphdr) + 4);
+	iph->tot_len = htons(sizeof(struct iphdr));
 	iph->id = htons(500);
 	iph->frag_off = 0;
 	iph->ttl = 64;
@@ -104,8 +105,7 @@ int main(int argc, char *argv[])
 	iph->saddr = inet_addr(inet_ntoa(((struct sockaddr_in *)&if_ip.ifr_addr)->sin_addr));
 	iph->daddr = inet_addr("10.0.0.2");
 
-	tx_len += sizeof(struct iphdr) + 8;
-	/* size = 28, ihl = 28, tot_len = 24 */
+	tx_len += sizeof(struct iphdr);
 
 	/* Packet data */
 	//sendbuf[tx_len++] = 0xde;
