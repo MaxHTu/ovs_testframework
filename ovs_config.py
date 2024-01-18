@@ -14,6 +14,8 @@ def start_valgrind(log_filename):
     os.system('sudo valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ovsdb-server --remote=punix:/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --detach')
     os.system('sudo valgrind --trace-children=yes --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file={} ovs-vswitchd unix:/var/run/openvswitch/db.sock --detach'.format(ovs_vswitchd_logs))
     
+    os.chmod(ovs_vswitchd_logs, 0o777)
+
     return ovs_vswitchd_logs
 
 # Kills ovs-vswitchd and ovsdb-server process running with valgrind and start ovs-vswitchd normally
@@ -24,6 +26,7 @@ def valgrind_cleanup():
     sleep(2)
 
     os.system('sudo service openvswitch-switch start')
+
 
 # This is for testing purposes:
 if __name__ == '__main__':
