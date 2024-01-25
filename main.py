@@ -3,22 +3,26 @@ import sys
 import tests
 from datetime import datetime
 
-def get_functions():
-    list_cve = [func for func in dir(tests) if callable(getattr(tests, func)) and func.startswith('cve_')]
-    indexing = {str(index + 1): func for index, func in enumerate(list_cve)}
-    return indexing
+def get_kernel_version():
+    output = os.popen('uname -r').read().strip()
+    return output
 
 def get_ovs_version():
     output = os.popen('ovs-vsctl --version').read()
     ovs_version = output.split()[3]
     return ovs_version
 
+def get_functions():
+    list_cve = [func for func in dir(tests) if callable(getattr(tests, func)) and func.startswith('cve_')]
+    indexing = {str(index + 1): func for index, func in enumerate(list_cve)}
+    return indexing
+
 def start_tests():
     all_cve = get_functions()
 
     print('Available CVE Tests')
-    for num, cve in all_cve.items():
-        print('{}. {}'.format(num, cve))
+    for num in sorted(all_cve.keys(), key=int):
+        print('{}. {}'.format(num, all_cve[num]))
 
     try:
         usr_input = raw_input("Enter the number(s) of the CVE test(s) to run (e.g. 1 or 1,2,3 or 'all'): ")
@@ -50,8 +54,12 @@ def main():
     if os.geteuid() != 0:
         sys.exit("This Script must be run as root")
 
+    kernel_version = get_kernel_version()
+    print('Current Kernel version: {}'.format(kernel_version))
+
     ovs_version = get_ovs_version()
     print('Current Open vSwitch version: {}'.format(ovs_version))
+    
     test_results = start_tests()
 
     folder_path = 'test_results'
@@ -63,13 +71,14 @@ def main():
     print('Test Results:')
 
     with open(log_file_path, 'w') as log_file:
+        log_file.write('Kernel version: {}\n'.format(kernel_version))
         log_file.write('Open vSwitch version: {}\n'.format(ovs_version))
+        log_file.write('\n')
         log_file.write('Test Results:\n')
         for test, result in test_results.items():
             result_text = "vulnerable: {}".format('true' if result else 'false')
             print('{} {}'.format(test, result_text))
             log_file.write('{} {}\n'.format(test, result_text))
-
 
 if __name__ == '__main__':
     main()
