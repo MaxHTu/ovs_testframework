@@ -36,7 +36,7 @@ def set_log_path(log_filename):
     ovs_vswitchd_logs = "logs/{}_{}.log".format(log_filename, timestamp)
 
     os.system('sudo ovsdb-server --log-file={} --remote=punix:/var/run/openvswitch/db.sock --remote=db:Open_vSwitch,Open_vSwitch,manager_options --detach'.format(ovsdb_server_logs))
-    os.system('sudo ovs-vswitchd --log-file={} unix:/var/run/openvswitch/db.sock --detach'.format(ovs_vswitchd_logs))
+    os.system('sudo ovs-vswitchd  --log-file={} unix:/var/run/openvswitch/db.sock --detach'.format(ovs_vswitchd_logs))
 
     os.chmod(ovs_vswitchd_logs, 0o666)
 

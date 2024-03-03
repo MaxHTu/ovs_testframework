@@ -26,6 +26,7 @@ class MininetNetwork:
 
         self.net.start()
         self.flow_rules(s1)
+    
         #CLI(self.net)
 
     # Mininet setup with 1 host and 1 switch
@@ -65,6 +66,6 @@ if __name__ == '__main__':
     mininet = MininetNetwork()
     #mininet.mininet_1h_1s()
     #mininet.mininet_2h_1s() 
-    #sleep(5)
+    sleep(5)
     mininet.stop_mininet()
     mininet.cleanup_network()
