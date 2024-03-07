@@ -2,8 +2,6 @@
 
 version=$1
 
-sudo apt-get install -y openvswitch-switch
-
 sudo apt-get remove -y openvswitch-common openvswitch-datapath-dkms openvswitch-pki openvswitch-switch openvswitch-controller
 
 sudo apt-get install -y build-essential fakeroot
@@ -13,11 +11,11 @@ cd /tmp
 wget http://openvswitch.org/releases/openvswitch-$version.tar.gz
 tar zxvf openvswitch-$version.tar.gz
 cd openvswitch-$version
-./configure --prefix=/usr --with-linux=/lib/modules/`uname -r`/build
+./configure --with-linux=/lib/modules/`uname -r`/build
 sudo make
 sudo make install
 sudo make modules_install
 
 rm -rf /tmp/openvswitch-$version*
-sudo service openvswitch-switch restart
-sudo ovs-vsctl -V
+
+/usr/share/openvswitch/scripts/ovs-ctl start  --system-id="random"

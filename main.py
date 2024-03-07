@@ -1,7 +1,14 @@
 import os
 import sys
+import subprocess
+import argparse
 import tests
 from datetime import datetime
+
+def install_ovs_version(version):
+    os.system('chmod +x install_ovs.sh')
+    script_path = './install_ovs.sh'
+    subprocess.call([script_path, version])
 
 def get_kernel_version():
     output = os.popen('uname -r').read().strip()
@@ -51,8 +58,15 @@ def start_tests():
 
 def main():
 
+    parser = argparse.ArgumentParser(description='OvS Testing Framework')
+    parser.add_argument('-V', '--version', help='Install a specific version of Open vSwitch', type=str)
+    args = parser.parse_args()
+
     if os.geteuid() != 0:
         sys.exit("This Script must be run as root")
+
+    if args.version:
+        install_ovs_version(args.version)
 
     kernel_version = get_kernel_version()
     print('Current Kernel version: {}'.format(kernel_version))
