@@ -226,7 +226,7 @@ def cve_2022_4338():
     os.system('sudo ovs-vsctl set interface s1-eth1 lldp:enable=true')
     os.system('sudo ovs-vsctl set interface s1 lldp:enable=true')
 
-    mininet.net['s1'].cmd('sudo wireshark -i s1-eth1 -k &')
+    #mininet.net['s1'].cmd('sudo wireshark -i s1-eth1 -k &')
 
     #sleep(10)
 
