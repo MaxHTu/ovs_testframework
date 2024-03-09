@@ -89,7 +89,8 @@ def main():
         log_file.write('Open vSwitch version: {}\n'.format(ovs_version))
         log_file.write('\n')
         log_file.write('Test Results:\n')
-        for test, result in test_results.items():
+        for test in sorted(test_results.keys()):
+            result = test_results[test]
             result_text = "vulnerable: {}".format('true' if result else 'false')
             print('{} {}'.format(test, result_text))
             log_file.write('{} {}\n'.format(test, result_text))
