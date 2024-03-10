@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 	/* Ethertype field */
 	eh->ether_type = htons(ETH_P_IP);
 	//tx_len += sizeof(struct ether_header);
-		tx_len += sizeof(struct ether_header) + 256;
+	tx_len += sizeof(struct ether_header) + 256;
 
 	/* IP Header */
 	iph->version = 4;
