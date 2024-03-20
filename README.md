@@ -1,6 +1,6 @@
 # ovs_testframework
 ### Overview
-To automatically reproduce and evaluate the vulnerabilities within the packet parsing process of OvS, we have developed a Testing Framework. This framework is designed to automate the testing for nine CVEs, to enhance the understanding and mitigation of network vulnerabilities leveraging OvS deployments.
+To automatically reproduce and evaluate the vulnerabilities within the packet parsing process of Open vSwitch(OvS), we have developed a Testing Framework. This framework is designed to automate the testing for nine CVEs, to enhance the understanding and mitigation of network vulnerabilities leveraging OvS deployments.
 
 ### Disclaimer
 To ensure the integrity and safety of operational networks, all testing linked to this framewokr was entirely within our own isolated infrastructure. This work provides open-source access to code that could potentially be used to exploit flaws in different versions of Open vSwitch. It is important to highlight that the purpose of this thesis and the OvS Testing Framework is strictly educational and aimed at supporting research and enhancing security. It is especially not intended for any malicious use, including 
@@ -19,6 +19,9 @@ sudo python main.py -V <version>
 ```
 # openvswitch_version_check
 ### Overview
+This script lists the vulnerabilities for OvS, provides a short description
+of each, prints the total count, and calculates the average Common Vulnerability Scoring
+System Base Score for the given version.
 
 ### Requirements
 
